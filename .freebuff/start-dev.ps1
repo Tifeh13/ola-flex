@@ -1,2 +1,0 @@
-$proc = Start-Process -FilePath 'npm.cmd' -ArgumentList 'run','dev:frontend' -WorkingDirectory 'C:\Users\afola\Desktop\muj' -RedirectStandardOutput 'C:\Users\afola\Desktop\muj\.freebuff\preview-eb5faf10-f591-4a05-815c-b1b7623f0a8d.log' -RedirectStandardError 'C:\Users\afola\Desktop\muj\.freebuff\preview-eb5faf10-f591-4a05-815c-b1b7623f0a8d.log.err' -WindowStyle Hidden -PassThru
-Write-Output $proc.Id
