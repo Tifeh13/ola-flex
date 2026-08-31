@@ -1,15 +1,10 @@
 const API_BASE = '/api';
 
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem('olaflex_token');
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
 
   // Don't set Content-Type for FormData
   if (options.body instanceof FormData) {
@@ -26,16 +21,11 @@ async function request(endpoint, options = {}) {
     throw new Error(`Network error: ${fetchErr.message}. Is the backend server running?`);
   }
 
-  if (res.status === 401) {
-    throw new Error('Unauthorized');
-  }
-
   let data;
   const contentType = res.headers.get('content-type') || '';
   if (contentType.includes('application/json')) {
     data = await res.json();
   } else {
-    // Response is not JSON — likely an HTML error page from the server
     const text = await res.text();
     console.error('Non-JSON response:', res.status, text.substring(0, 200));
     throw new Error(`Server returned non-JSON response (${res.status}). The API may be misconfigured.`);
@@ -47,21 +37,6 @@ async function request(endpoint, options = {}) {
 
   return data;
 }
-
-// Auth
-export const authAPI = {
-  login: (username, password) =>
-    request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    }),
-  me: () => request('/auth/me'),
-  changePassword: (currentPassword, newPassword) =>
-    request('/auth/change-password', {
-      method: 'PUT',
-      body: JSON.stringify({ currentPassword, newPassword }),
-    }),
-};
 
 // Products
 export const productsAPI = {
@@ -126,7 +101,7 @@ export const statsAPI = {
 // WhatsApp helper
 export function getWhatsAppUrl(product) {
   const message = encodeURIComponent(
-    `Hello OLAFLEX,\n\nI would like to order:\n\nProduct: ${product.name}\nBrand: ${product.brand}\nPrice: ₦${product.price?.toLocaleString()}\nReference: ${product.reference || 'N/A'}\n\nPlease confirm availability and delivery information.`
+    `Hello OLAFLEX,\\n\\nI would like to order:\\n\\nProduct: ${product.name}\\nBrand: ${product.brand}\\nPrice: ₦${product.price?.toLocaleString()}\\nReference: ${product.reference || 'N/A'}\\n\\nPlease confirm availability and delivery information.`
   );
   return `https://wa.me/2349054318483?text=${message}`;
 }

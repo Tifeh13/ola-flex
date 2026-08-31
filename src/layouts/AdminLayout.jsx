@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../hooks/useAuth.jsx';
-import { LayoutDashboard, Package, Plus, Store, LogOut, Menu, X, KeyRound } from 'lucide-react';
-import LoadingScreen from '../components/LoadingScreen.jsx';
+import { LayoutDashboard, Package, Plus, Store, LogOut, Menu, X } from 'lucide-react';
 
-function AdminSidebar({ onNavigate }) {
-  const { user, logout } = useAuth();
+function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -15,10 +12,8 @@ function AdminSidebar({ onNavigate }) {
     { to: '/admin/products', icon: Package, label: 'Products' },
     { to: '/admin/products/new', icon: Plus, label: 'Add Product' },
     { to: '/', icon: Store, label: 'View Store' },
-    { to: '/admin/change-password', icon: KeyRound, label: 'Change Password' },
   ];
 
-  const handleLogout = () => { logout(); navigate('/admin/login'); };
   const isActive = (path) => path === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(path);
 
   return (
@@ -49,9 +44,8 @@ function AdminSidebar({ onNavigate }) {
               ))}
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
-              <div className="text-xs text-ink-muted mb-2">{user?.username}</div>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
-                <LogOut size={16} /> Logout
+              <button onClick={() => navigate('/')} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
+                <LogOut size={16} /> Back to Store
               </button>
             </div>
           </div>
@@ -68,7 +62,7 @@ function AdminSidebar({ onNavigate }) {
         </div>
         <nav className="flex-1 p-4 space-y-1">
           {links.map(link => (
-            <Link key={link.to} to={link.to} onClick={onNavigate}
+            <Link key={link.to} to={link.to}
               className={`flex items-center gap-3 px-4 py-2.5 rounded text-sm transition-colors ${
                 isActive(link.to) ? 'bg-brand-50 text-brand-500 font-medium' : 'text-ink-secondary hover:text-ink hover:bg-surface-alt'
               }`}>
@@ -77,9 +71,8 @@ function AdminSidebar({ onNavigate }) {
           ))}
         </nav>
         <div className="p-4 border-t border-border">
-          <div className="text-xs text-ink-muted mb-2">Signed in as <span className="text-ink font-medium">{user?.username}</span></div>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
-            <LogOut size={16} /> Logout
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
+            <LogOut size={16} /> Back to Store
           </button>
         </div>
       </div>
@@ -87,21 +80,13 @@ function AdminSidebar({ onNavigate }) {
   );
 }
 
-function AdminLayoutInner() {
+export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-admin-bg">
       <AdminSidebar />
       <div className="lg:ml-64 pt-14 lg:pt-0">
-        <div className="p-4 sm:p-6 lg:p-8">{<Outlet />}</div>
+        <div className="p-4 sm:p-6 lg:p-8"><Outlet /></div>
       </div>
     </div>
-  );
-}
-
-export default function AdminLayoutWrapper() {
-  return (
-    <AuthProvider>
-      <AdminLayoutInner />
-    </AuthProvider>
   );
 }

@@ -10,12 +10,10 @@ const Shop = lazy(() => import('./pages/Shop.jsx'))
 const ProductDetails = lazy(() => import('./pages/ProductDetails.jsx'))
 const About = lazy(() => import('./pages/About.jsx'))
 const HowToOrder = lazy(() => import('./pages/HowToOrder.jsx'))
-const Login = lazy(() => import('./pages/Login.jsx'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
 const AdminProducts = lazy(() => import('./pages/AdminProducts.jsx'))
 const AddProduct = lazy(() => import('./pages/AddProduct.jsx'))
 const EditProduct = lazy(() => import('./pages/EditProduct.jsx'))
-const ChangePassword = lazy(() => import('./pages/ChangePassword.jsx'))
 
 export default function App() {
   return (
@@ -31,14 +29,12 @@ export default function App() {
           <Route path="/how-to-order" element={<HowToOrder />} />
         </Route>
 
-        {/* Admin routes */}
-        <Route path="/admin/login" element={<Login />} />
+        {/* Admin routes — no login required */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/products/new" element={<AddProduct />} />
           <Route path="/admin/products/:id/edit" element={<EditProduct />} />
-          <Route path="/admin/change-password" element={<ChangePassword />} />
         </Route>
 
         {/* Catch-all */}
