@@ -88,16 +88,6 @@ function AdminSidebar({ onNavigate }) {
 }
 
 function AdminLayoutInner() {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !user) navigate('/admin/login');
-  }, [user, loading, navigate]);
-
-  if (loading) return <LoadingScreen />;
-  if (!user) return null;
-
   return (
     <div className="min-h-screen bg-admin-bg">
       <AdminSidebar />

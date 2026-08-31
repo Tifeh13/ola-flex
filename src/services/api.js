@@ -27,11 +27,6 @@ async function request(endpoint, options = {}) {
   }
 
   if (res.status === 401) {
-    localStorage.removeItem('olaflex_token');
-    localStorage.removeItem('olaflex_user');
-    if (window.location.pathname.startsWith('/admin')) {
-      window.location.href = '/admin/login';
-    }
     throw new Error('Unauthorized');
   }
 

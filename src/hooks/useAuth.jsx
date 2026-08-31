@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import { useState, createContext, useContext, useCallback } from 'react';
 import { authAPI } from '../services/api.js';
 
 const AuthContext = createContext(null);
@@ -12,25 +12,7 @@ export function AuthProvider({ children }) {
       return null;
     }
   });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('olaflex_token');
-    if (token && !user) {
-      authAPI.me()
-        .then(u => {
-          setUser(u);
-          localStorage.setItem('olaflex_user', JSON.stringify(u));
-        })
-        .catch(() => {
-          localStorage.removeItem('olaflex_token');
-          localStorage.removeItem('olaflex_user');
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  const [loading] = useState(false);
 
   const login = useCallback(async (username, password) => {
     const data = await authAPI.login(username, password);

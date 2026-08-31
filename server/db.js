@@ -1,7 +1,11 @@
 import { createClient } from '@libsql/client';
 
+// On Vercel, the working directory is read-only, so use /tmp for local file fallback
+const dbUrl = process.env.TURSO_DATABASE_URL
+  || (process.env.VERCEL ? 'file:/tmp/olaflex.db' : 'file:olaflex.db');
+
 const db = createClient({
-  url: process.env.TURSO_DATABASE_URL || 'file:olaflex.db',
+  url: dbUrl,
   authToken: process.env.TURSO_AUTH_TOKEN || undefined,
 });
 
