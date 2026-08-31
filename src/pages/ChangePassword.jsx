@@ -64,6 +64,7 @@ export default function ChangePassword() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
           onSubmit={handleSubmit}
+          noValidate
           className="mt-8 space-y-5"
         >
           {/* Current Password */}

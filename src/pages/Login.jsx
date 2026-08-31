@@ -44,7 +44,7 @@ function LoginForm() {
           <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-ink-muted">Admin Panel</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 border border-border bg-surface-card">
+        <form onSubmit={handleSubmit} noValidate className="p-8 border border-border bg-surface-card">
           <h2 className="font-display text-lg font-semibold text-ink text-center mb-6">Sign In</h2>
 
           {error && (
