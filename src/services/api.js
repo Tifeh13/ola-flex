@@ -35,7 +35,16 @@ async function request(endpoint, options = {}) {
     throw new Error('Unauthorized');
   }
 
-  const data = await res.json();
+  let data;
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    data = await res.json();
+  } else {
+    // Response is not JSON — likely an HTML error page from the server
+    const text = await res.text();
+    console.error('Non-JSON response:', res.status, text.substring(0, 200));
+    throw new Error(`Server returned non-JSON response (${res.status}). The API may be misconfigured.`);
+  }
 
   if (!res.ok) {
     throw new Error(data.error || 'Request failed');
