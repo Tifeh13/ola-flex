@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, Plus, Store, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, Plus, Store, LogOut, Menu, X, KeyRound } from 'lucide-react';
+import { logoutAdmin } from '../pages/Login.jsx';
 
 function AdminSidebar() {
   const navigate = useNavigate();
@@ -12,9 +13,15 @@ function AdminSidebar() {
     { to: '/admin/products', icon: Package, label: 'Products' },
     { to: '/admin/products/new', icon: Plus, label: 'Add Product' },
     { to: '/', icon: Store, label: 'View Store' },
+    { to: '/admin/change-password', icon: KeyRound, label: 'Change Password' },
   ];
 
   const isActive = (path) => path === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(path);
+
+  const handleLogout = () => {
+    logoutAdmin();
+    navigate('/admin/login');
+  };
 
   return (
     <>
@@ -44,8 +51,8 @@ function AdminSidebar() {
               ))}
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
-              <button onClick={() => navigate('/')} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
-                <LogOut size={16} /> Back to Store
+              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
+                <LogOut size={16} /> Logout
               </button>
             </div>
           </div>
@@ -71,8 +78,8 @@ function AdminSidebar() {
           ))}
         </nav>
         <div className="p-4 border-t border-border">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
-            <LogOut size={16} /> Back to Store
+          <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-muted hover:text-status-out transition-colors">
+            <LogOut size={16} /> Logout
           </button>
         </div>
       </div>

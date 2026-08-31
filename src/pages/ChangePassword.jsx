@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import { authAPI } from '../services/api.js';
+import { Eye, EyeOff, Loader2, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { verifyAdmin, setAdminPassword } from './Login.jsx';
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -12,135 +11,85 @@ export default function ChangePassword() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!currentPassword || !newPassword) {
-      toast.error('Please fill in all fields');
+    // Verify current password
+    if (!verifyAdmin('admin', currentPassword)) {
+      toast.error('Current password is incorrect');
+      setLoading(false);
       return;
     }
+
     if (newPassword.length < 6) {
       toast.error('New password must be at least 6 characters');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error('New passwords do not match');
-      return;
-    }
-    if (currentPassword === newPassword) {
-      toast.error('New password must be different from current');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    try {
-      await authAPI.changePassword(currentPassword, newPassword);
-      toast.success('Password updated successfully');
-      setSuccess(true);
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      toast.error(err.message || 'Failed to change password');
-    } finally {
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match');
       setLoading(false);
+      return;
     }
+
+    await new Promise(r => setTimeout(r, 300));
+    setAdminPassword(newPassword);
+    toast.success('Password changed successfully');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setLoading(false);
   };
 
   return (
     <>
       <Helmet><title>Change Password — OLAFLEX Admin</title></Helmet>
-      <div className="max-w-lg">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-ink">Change Password</h1>
-          <p className="mt-1 text-sm text-ink-muted">Update your admin account password.</p>
-        </motion.div>
+      <div className="max-w-md mx-auto">
+        <h1 className="font-display text-2xl font-bold text-ink mb-6">Change Password</h1>
 
-        <motion.form
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
-          onSubmit={handleSubmit}
-          noValidate
-          className="mt-8 space-y-5"
-        >
-          {/* Current Password */}
+        <form onSubmit={handleSubmit} className="p-6 border border-border bg-surface-card space-y-5">
           <div>
-            <label className="block text-xs uppercase tracking-wider text-ink-muted font-medium mb-2">Current Password</label>
+            <label className="block text-[10px] uppercase tracking-wider text-ink-muted mb-1.5">Current Password</label>
             <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted/50" />
               <input
-                type={showCurrent ? 'text' : 'password'}
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter current password"
-                className="w-full pl-10 pr-10 py-3 bg-surface-card border border-border text-ink text-sm outline-none focus:border-brand-400 transition-colors"
-                required
+                type={showCurrent ? 'text' : 'password'} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required
+                className="input-luxury pr-10" placeholder="Enter current password"
               />
-              <button type="button" onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted/50 hover:text-ink-muted transition-colors">
+              <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition-colors">
                 {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
-          {/* New Password */}
           <div>
-            <label className="block text-xs uppercase tracking-wider text-ink-muted font-medium mb-2">New Password</label>
+            <label className="block text-[10px] uppercase tracking-wider text-ink-muted mb-1.5">New Password</label>
             <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted/50" />
               <input
-                type={showNew ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password (min. 6 characters)"
-                className="w-full pl-10 pr-10 py-3 bg-surface-card border border-border text-ink text-sm outline-none focus:border-brand-400 transition-colors"
-                required
-                minLength={6}
+                type={showNew ? 'text' : 'password'} value={newPassword} onChange={e => setNewPassword(e.target.value)} required
+                className="input-luxury pr-10" placeholder="Enter new password"
               />
-              <button type="button" onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted/50 hover:text-ink-muted transition-colors">
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition-colors">
                 {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+            <p className="mt-1 text-[10px] text-ink-muted">Minimum 6 characters</p>
           </div>
 
-          {/* Confirm Password */}
           <div>
-            <label className="block text-xs uppercase tracking-wider text-ink-muted font-medium mb-2">Confirm New Password</label>
-            <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted/50" />
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter new password"
-                className="w-full pl-10 pr-4 py-3 bg-surface-card border border-border text-ink text-sm outline-none focus:border-brand-400 transition-colors"
-                required
-                minLength={6}
-              />
-            </div>
+            <label className="block text-[10px] uppercase tracking-wider text-ink-muted mb-1.5">Confirm New Password</label>
+            <input
+              type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
+              className="input-luxury" placeholder="Confirm new password"
+            />
           </div>
 
-          {/* Success message */}
-          {success && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 text-green-700 text-sm">
-              <CheckCircle size={16} />
-              Password updated successfully!
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-gold w-full py-3 text-sm font-medium disabled:opacity-50"
-          >
-            {loading ? 'Updating...' : 'Update Password'}
+          <button type="submit" disabled={loading} className="w-full btn-gold justify-center disabled:opacity-50">
+            {loading ? <><Loader2 size={16} className="animate-spin" /> Updating...</> : <><Check size={16} /> Update Password</>}
           </button>
-        </motion.form>
+        </form>
       </div>
     </>
   );
