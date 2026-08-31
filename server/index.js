@@ -426,6 +426,34 @@ app.get('/api/admin/stats', authenticate, async (req, res) => {
   }
 });
 
+// ===== HEALTH CHECK (no auth needed) =====
+app.get('/api/health', async (req, res) => {
+  try {
+    const user = await dbGet('SELECT id FROM users WHERE username = ?', ['olaflex1']);
+    res.json({
+      status: 'ok',
+      database: 'connected',
+      adminExists: !!user,
+      tursoUrl: process.env.TURSO_DATABASE_URL ? 'set' : 'not set (using local file)',
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      database: 'disconnected',
+      error: err.message,
+      tursoUrl: process.env.TURSO_DATABASE_URL ? 'set' : 'not set (using local file)',
+    });
+  }
+});
+
+// ===== GLOBAL ERROR HANDLER (must be last) =====
+app.use((err, req, res, _next) => {
+  console.error('Unhandled error:', err.message || err);
+  if (!res.headersSent) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // ===== INIT & START (local dev only) =====
 
 async function startServer() {
