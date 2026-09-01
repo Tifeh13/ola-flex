@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Link as LinkIcon } from 'lucide-react';
@@ -40,6 +40,13 @@ export default function AddProduct() {
     setUrlInput('');
     setShowUrlInput(false);
   };
+
+  // Memoized so this array only gets recreated when `images` actually changes,
+  // not on every keystroke elsewhere in the form (e.g. typing the description).
+  const uploadImages = useMemo(
+    () => images.map((url, i) => ({ id: i, image_url: url, is_primary: i === 0 ? 1 : 0 })),
+    [images]
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,7 +101,7 @@ export default function AddProduct() {
           <div className="p-5 border border-border bg-surface-card">
             <label className="block text-[10px] uppercase tracking-wider text-brand-500 mb-3 font-medium">Product Images</label>
             <ImageUpload
-              images={images.map((url, i) => ({ id: i, image_url: url, is_primary: i === 0 ? 1 : 0 }))}
+              images={uploadImages}
               onAdd={handleAddImage}
               onRemove={handleRemoveImage}
               maxImages={10}
