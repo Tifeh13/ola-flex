@@ -148,7 +148,7 @@ export default function AddProduct() {
                   <option value="in_stock">In Stock</option><option value="low_stock">Low Stock</option><option value="out_of_stock">Out of Stock</option>
                 </select>
               </div>
-              <div><label className="block text-xs text-ink-muted mb-1">Stock Quantity</label><input type="text" inputMode="numeric" value={form.stock_quantity} onChange={e => set('stock_quantity', e.target.value.replace(/[^0-9]/g, ''))} onKeyDown={e => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','Escape','Enter','ArrowLeft','ArrowRight','Home','End'].includes(e.key) && !(e.ctrlKey || e.metaKey)) e.preventDefault(); }} className="input-luxury [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" /></div>
+              <div><label className="block text-xs text-ink-muted mb-1">Stock Quantity</label><input type="text" inputMode="numeric" value={form.stock_quantity} onChange={e => set('stock_quantity', e.target.value.replace(/[^0-9]/g, ''))} className="input-luxury [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" /></div>
               <div className="flex items-end"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.is_featured} onChange={e => set('is_featured', e.target.checked)} className="w-4 h-4 accent-brand-500" /><span className="text-sm text-ink-muted">Featured Product</span></label></div>
             </div>
           </div>
