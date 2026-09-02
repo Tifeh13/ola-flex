@@ -1,8 +1,11 @@
 const API_BASE = '/api';
 
 async function request(endpoint, options = {}) {
+  const token = localStorage.getItem('olaflex_token');
+
   const headers = {
     'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -32,6 +35,11 @@ async function request(endpoint, options = {}) {
   }
 
   if (!res.ok) {
+    // If the token is invalid/expired, clear it so the app doesn't get stuck
+    // thinking it's logged in with a token the server no longer accepts.
+    if (res.status === 401) {
+      localStorage.removeItem('olaflex_token');
+    }
     throw new Error(data.error || 'Request failed');
   }
 
