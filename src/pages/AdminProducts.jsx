@@ -92,7 +92,7 @@ export default function AdminProducts() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
-                          <a href={`/product/${product.id}`} target="_blank" className="p-2 text-ink-muted hover:text-ink transition-colors rounded hover:bg-surface-alt" title="View">
+                          <a href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="p-2 text-ink-muted hover:text-ink transition-colors rounded hover:bg-surface-alt" title="View">
                             <Eye size={15} />
                           </a>
                           <Link to={`/admin/products/${product.id}/edit`} className="p-2 text-ink-muted hover:text-brand-500 transition-colors rounded hover:bg-brand-50" title="Edit">

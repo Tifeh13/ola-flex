@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Link as LinkIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { productsAPI, imagesAPI } from '../services/api.js';
+import { parseSpecs } from '../utils/helpers.js';
 import ImageUpload from '../components/ImageUpload.jsx';
 import PriceInput from '../components/PriceInput.jsx';
 import toast from 'react-hot-toast';
@@ -34,7 +35,7 @@ export default function EditProduct() {
           availability: product.availability || 'in_stock', stock_quantity: product.stock_quantity || 0,
           is_featured: product.is_featured === 1, reference: product.reference || '',
         });
-        setSpecs(product.specifications ? JSON.parse(product.specifications) : {});
+        setSpecs(parseSpecs(product.specifications));
         setImages(product.images || []);
       })
       .catch(() => { toast.error('Failed to load product'); navigate('/admin/products'); })

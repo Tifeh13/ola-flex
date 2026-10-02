@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Helmet } from 'react-helmet-async'
 import { ChevronDown, ArrowRight } from 'lucide-react'
 
 const steps = [
@@ -46,6 +47,11 @@ export default function HowToOrder() {
 
   return (
     <div className="min-h-screen pt-24 bg-white">
+      <Helmet>
+        <title>How to Order — OLAFLEX</title>
+        <meta name="description" content="Four simple steps to owning an OLAFLEX timepiece — browse, select, order, receive." />
+      </Helmet>
+
       {/* Hero */}
       <section className="relative py-32 sm:py-40 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/50 to-white" />

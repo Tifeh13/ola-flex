@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Helmet } from 'react-helmet-async'
 import { Shield, Wrench, Leaf, Heart } from 'lucide-react'
 
 const milestones = [
@@ -19,6 +20,11 @@ const values = [
 export default function About() {
   return (
     <div className="min-h-screen pt-24 bg-white">
+      <Helmet>
+        <title>About — OLAFLEX</title>
+        <meta name="description" content="The story behind OLAFLEX — traditional watchmaking excellence meets contemporary design innovation." />
+      </Helmet>
+
       {/* Hero */}
       <section className="relative py-32 sm:py-40 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/50 to-white" />

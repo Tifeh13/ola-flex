@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Eye, EyeOff, Loader2, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { verifyAdmin, setAdminPassword } from './Login.jsx';
+import { verifyAdmin, setAdminPassword } from '../utils/adminAuth.js';
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('');

@@ -4,7 +4,8 @@ import PublicLayout from './layouts/PublicLayout.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
-import { isLoggedIn } from './pages/Login.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { isLoggedIn } from './utils/adminAuth.js'
 
 const Home = lazy(() => import('./pages/Home.jsx'))
 const Shop = lazy(() => import('./pages/Shop.jsx'))

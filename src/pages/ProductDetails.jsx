@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, Minus, Plus, Star, Truck, MessageCircle, ShoppingCart, ArrowRight } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { productsAPI, getWhatsAppUrl } from '../services/api.js';
-import { formatPrice, getAvailabilityLabel, getImageUrl } from '../utils/helpers.js';
+import { formatPrice, getAvailabilityLabel, getImageUrl, parseSpecs } from '../utils/helpers.js';
 import ImageLightbox from '../components/ImageLightbox.jsx';
 
 const AccordionItem = ({ title, children, defaultOpen = false }) => {
@@ -82,7 +82,7 @@ export default function ProductDetails() {
     ? product.images.map(img => getImageUrl(img.image_url))
     : ['/placeholder-watch.svg'];
 
-  const specs = product.specifications ? JSON.parse(product.specifications) : {};
+  const specs = parseSpecs(product.specifications);
   const related = product.related || [];
   const availability = getAvailabilityLabel(product.availability);
 

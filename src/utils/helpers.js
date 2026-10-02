@@ -28,6 +28,19 @@ export function getAvailabilityLabel(status) {
   }
 }
 
+// Safely parse a product's specifications JSON. Malformed data from an old
+// row must not crash the whole product page — fall back to an empty object.
+export function parseSpecs(raw) {
+  if (!raw) return {};
+  if (typeof raw === 'object') return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 export function getImageUrl(imageUrl) {
   if (!imageUrl || imageUrl === '/placeholder-watch.svg') return '/placeholder-watch.svg';
   return imageUrl;

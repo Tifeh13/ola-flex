@@ -65,7 +65,7 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap gap-3 mt-8">
           <Link to="/admin/products/new" className="btn-gold text-xs py-2.5 px-5"><Plus size={14} /> Add Product</Link>
           <Link to="/admin/products" className="btn-outline text-xs py-2.5 px-5"><Package size={14} /> Manage Products</Link>
-          <a href="/" target="_blank" className="btn-outline text-xs py-2.5 px-5"><Store size={14} /> View Store</a>
+          <a href="/" target="_blank" rel="noopener noreferrer" className="btn-outline text-xs py-2.5 px-5"><Store size={14} /> View Store</a>
           {stats?.total > 0 && (
             <button onClick={() => setShowDeleteAll(true)} className="text-xs py-2.5 px-5 border border-red-200 text-status-out hover:bg-red-50 transition-colors flex items-center gap-2 font-medium">
               <Trash2 size={14} /> Delete All Products

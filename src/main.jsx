@@ -4,11 +4,13 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
+      <ErrorBoundary>
       <BrowserRouter>
         <App />
         <Toaster
@@ -29,6 +31,7 @@ createRoot(document.getElementById('root')).render(
           }}
         />
       </BrowserRouter>
+      </ErrorBoundary>
     </HelmetProvider>
   </StrictMode>,
 )

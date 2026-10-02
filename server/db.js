@@ -10,25 +10,29 @@ const db = createClient({
 });
 
 // ===== Simple in-memory cache with short TTL =====
+// Every write bumps writeVersion; a read only serves its cached copy while
+// the version it captured is still current. This closes two races that used
+// to make freshly-added products invisible:
+//   1. entries created before a write (TTL alone left them live for 5s)
+//   2. a read that started before a write but finished after invalidation
 const cache = new Map();
 const CACHE_TTL = 5_000; // 5 seconds — fast expiry so products show quickly after add
-let lastWriteAt = 0; // track the last write time
+let writeVersion = 0;
 
 function getCached(key) {
   const entry = cache.get(key);
-  // If a write happened after this cache entry was created, treat as stale
-  if (entry && Date.now() - entry.time < CACHE_TTL && entry.time > lastWriteAt) return entry.data;
+  if (entry && entry.version === writeVersion && Date.now() - entry.time < CACHE_TTL) return entry.data;
   cache.delete(key);
   return null;
 }
 
-function setCache(key, data) {
-  cache.set(key, { data, time: Date.now() });
+function setCache(key, data, version) {
+  cache.set(key, { data, time: Date.now(), version });
 }
 
 function invalidateAll() {
   cache.clear();
-  lastWriteAt = Date.now();
+  writeVersion += 1;
 }
 
 // Helper: run a query and return rows (with caching for reads)
@@ -37,8 +41,9 @@ export async function dbAll(sql, params = []) {
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
+  const version = writeVersion; // captured before the query runs
   const result = await db.execute({ sql, args: params.map(p => typeof p === 'bigint' ? Number(p) : p) });
-  setCache(cacheKey, result.rows);
+  setCache(cacheKey, result.rows, version);
   return result.rows;
 }
 
@@ -48,16 +53,20 @@ export async function dbGet(sql, params = []) {
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
+  const version = writeVersion; // captured before the query runs
   const result = await db.execute({ sql, args: params.map(p => typeof p === 'bigint' ? Number(p) : p) });
   const row = result.rows[0] || null;
-  if (row) setCache(cacheKey, row);
+  if (row) setCache(cacheKey, row, version);
   return row;
 }
 
 // Helper: run a statement (INSERT/UPDATE/DELETE) — invalidates ALL cache immediately
 export async function dbRun(sql, params = []) {
-  invalidateAll();
   const result = await db.execute({ sql, args: params.map(p => typeof p === 'bigint' ? Number(p) : p) });
+  // Invalidate AFTER the write completes. Invalidating before allowed a
+  // concurrent read to re-cache pre-write data that then survived for the
+  // full TTL — the classic "I just added it but it's not showing" bug.
+  invalidateAll();
   return {
     lastInsertRowid: Number(result.lastInsertRowid),
     changes: Number(result.rowsAffected),

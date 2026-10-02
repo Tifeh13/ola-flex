@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Shield, Truck, Award, Headphones } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 import Hero from '../components/Hero'
 import { productsAPI } from '../services/api.js'
 import { formatPrice, getImageUrl } from '../utils/helpers.js'
@@ -22,6 +23,10 @@ export default function Home() {
 
   return (
     <div className="bg-white">
+      <Helmet>
+        <title>OLAFLEX — Time Beyond Ordinary</title>
+        <meta name="description" content="Discover premium timepieces crafted with refined details, modern precision, and timeless sophistication for every occasion." />
+      </Helmet>
       <Hero />
 
       {/* ===== BRAND MARQUEE ===== */}

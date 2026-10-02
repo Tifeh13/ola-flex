@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Package, Plus, Store, LogOut, Menu, X, KeyRound } from 'lucide-react';
-import { logoutAdmin } from '../pages/Login.jsx';
+import { logoutAdmin } from '../utils/adminAuth.js';
 
 function AdminSidebar() {
   const navigate = useNavigate();

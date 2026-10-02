@@ -101,7 +101,7 @@ export const statsAPI = {
 // WhatsApp helper
 export function getWhatsAppUrl(product) {
   const message = encodeURIComponent(
-    `Hello OLAFLEX,\\n\\nI would like to order:\\n\\nProduct: ${product.name}\\nBrand: ${product.brand}\\nPrice: ₦${product.price?.toLocaleString()}\\nReference: ${product.reference || 'N/A'}\\n\\nPlease confirm availability and delivery information.`
+    `Hello OLAFLEX,\n\nI would like to order:\n\nProduct: ${product.name}\nBrand: ${product.brand}\nPrice: ₦${product.price?.toLocaleString()}\nReference: ${product.reference || 'N/A'}\n\nPlease confirm availability and delivery information.`
   );
   return `https://wa.me/2349054318483?text=${message}`;
 }

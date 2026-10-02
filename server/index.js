@@ -1,13 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import { dbGet, dbRun, dbAll, dbTransaction, initializeDatabase } from './db.js';
+import { dbGet, dbRun, dbAll, initializeDatabase } from './db.js';
 import { seedDatabase } from './seed.js';
 
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || 'olaflex_jwt_secret_key_2024_production';
 
 // Middleware
 app.use(cors());
@@ -30,82 +27,10 @@ app.get('/placeholder-watch.svg', (req, res) => {
   res.send(svg);
 });
 
-// Auth middleware
-function authenticate(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Authentication required' });
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
-  }
-}
-
-// ===== AUTH ROUTES =====
-
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
-    }
-    const user = await dbGet('SELECT * FROM users WHERE username = ?', [username]);
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({
-      token,
-      user: { id: user.id, username: user.username, role: user.role }
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
-
-// Protected: get current user (was crashing before — req.user.id was
-// accessed without the authenticate middleware ever running, so req.user
-// was always undefined here, which threw and returned a 500 on every call)
-app.get('/api/auth/me', authenticate, async (req, res) => {
-  try {
-    const user = await dbGet('SELECT id, username, role, created_at FROM users WHERE id = ?', [req.user.id]);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch user' });
-  }
-});
-
-// Admin: Change password
-app.put('/api/auth/change-password', authenticate, async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Current and new password are required' });
-    }
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'New password must be at least 6 characters' });
-    }
-    const user = await dbGet('SELECT * FROM users WHERE id = ?', [req.user.id]);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const valid = await bcrypt.compare(currentPassword, user.password);
-    if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
-
-    const hashed = await bcrypt.hash(newPassword, 10);
-    await dbRun('UPDATE users SET password = ? WHERE id = ?', [hashed, req.user.id]);
-    res.json({ message: 'Password updated successfully' });
-  } catch (err) {
-    console.error('Change password error:', err.message);
-    res.status(500).json({ error: 'Failed to change password' });
-  }
-});
+// ===== AUTH =====
+// The admin panel authenticates client-side with a hardcoded account, so the
+// old server-side JWT routes were removed — they were unused by the frontend
+// but still exposed a brute-forceable login endpoint.
 
 // ===== PRODUCT ROUTES =====
 
