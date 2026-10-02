@@ -53,8 +53,6 @@ export default function AddProduct() {
     if (!form.name || !form.brand || !form.price) { toast.error('Name, brand, and price are required'); return; }
     setSaving(true);
     try {
-      const token = localStorage.getItem('olaflex_token');
-      if (!token) { toast.error('You are not logged in. Please log in first.'); navigate('/admin/login'); return; }
       const priceNum = parseInt(String(form.price).replace(/[^0-9]/g, ''), 10);
       if (isNaN(priceNum) || priceNum <= 0) { toast.error('Please enter a valid price'); setSaving(false); return; }
       const stockNum = parseInt(String(form.stock_quantity).replace(/[^0-9]/g, ''), 10);

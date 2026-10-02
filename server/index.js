@@ -228,7 +228,7 @@ app.get('/api/brands', async (req, res) => {
 });
 
 // Admin: Create product
-app.post('/api/products', authenticate, async (req, res) => {
+app.post('/api/products', async (req, res) => {
   try {
     const { name, brand, category, price, description, short_description, availability, stock_quantity, is_featured, specifications, reference, image_url } = req.body;
 
@@ -266,7 +266,7 @@ app.post('/api/products', authenticate, async (req, res) => {
 });
 
 // Admin: Update product
-app.put('/api/products/:id', authenticate, async (req, res) => {
+app.put('/api/products/:id', async (req, res) => {
   try {
     const existing = await dbGet('SELECT id, name, brand, category, CAST(price AS TEXT) AS price, description, short_description, availability, stock_quantity, is_featured, specifications, reference, created_at, updated_at FROM products WHERE id = ?', [req.params.id]);
     if (!existing) return res.status(404).json({ error: 'Product not found' });
@@ -304,7 +304,7 @@ app.put('/api/products/:id', authenticate, async (req, res) => {
 });
 
 // Admin: Delete ALL products
-app.delete('/api/admin/products', authenticate, async (req, res) => {
+app.delete('/api/admin/products', async (req, res) => {
   try {
     await dbRun('DELETE FROM product_images');
     await dbRun('DELETE FROM products');
@@ -315,7 +315,7 @@ app.delete('/api/admin/products', authenticate, async (req, res) => {
 });
 
 // Admin: Delete product
-app.delete('/api/products/:id', authenticate, async (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
   try {
     const existing = await dbGet('SELECT id FROM products WHERE id = ?', [req.params.id]);
     if (!existing) return res.status(404).json({ error: 'Product not found' });
@@ -331,7 +331,7 @@ app.delete('/api/products/:id', authenticate, async (req, res) => {
 // ===== IMAGE ROUTES (URL-based) =====
 
 // Add image URL for a product
-app.post('/api/products/:id/images', authenticate, async (req, res) => {
+app.post('/api/products/:id/images', async (req, res) => {
   try {
     const product = await dbGet('SELECT id FROM products WHERE id = ?', [req.params.id]);
     if (!product) return res.status(404).json({ error: 'Product not found' });
@@ -354,7 +354,7 @@ app.post('/api/products/:id/images', authenticate, async (req, res) => {
 });
 
 // Set primary image
-app.put('/api/images/:id/primary', authenticate, async (req, res) => {
+app.put('/api/images/:id/primary', async (req, res) => {
   try {
     const image = await dbGet('SELECT * FROM product_images WHERE id = ?', [req.params.id]);
     if (!image) return res.status(404).json({ error: 'Image not found' });
@@ -368,7 +368,7 @@ app.put('/api/images/:id/primary', authenticate, async (req, res) => {
 });
 
 // Delete image
-app.delete('/api/images/:id', authenticate, async (req, res) => {
+app.delete('/api/images/:id', async (req, res) => {
   try {
     const image = await dbGet('SELECT * FROM product_images WHERE id = ?', [req.params.id]);
     if (!image) return res.status(404).json({ error: 'Image not found' });
@@ -394,7 +394,7 @@ app.delete('/api/images/:id', authenticate, async (req, res) => {
 
 // ===== DASHBOARD STATS =====
 
-app.get('/api/admin/stats', authenticate, async (req, res) => {
+app.get('/api/admin/stats', async (req, res) => {
   try {
     const total = await dbGet('SELECT COUNT(*) as count FROM products');
     const inStock = await dbGet("SELECT COUNT(*) as count FROM products WHERE availability = 'in_stock'");

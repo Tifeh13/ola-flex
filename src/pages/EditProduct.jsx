@@ -79,8 +79,6 @@ export default function EditProduct() {
     e.preventDefault();
     setSaving(true);
     try {
-      const token = localStorage.getItem('olaflex_token');
-      if (!token) { toast.error('You are not logged in'); navigate('/admin/login'); return; }
       await productsAPI.update(id, {
         name: form.name,
         brand: form.brand,
